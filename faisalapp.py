@@ -1,3 +1,8 @@
+from flask import Flask, render_template_string
+
+app = Flask(__name__)
+
+html_content = """
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -9,7 +14,6 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 
   <style>
-    /* Background with subtle animated grid */
     body {
       margin: 0;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -60,10 +64,9 @@
       color: #b0bec5;
     }
 
-    /* Responsive embedded video */
     .video-wrapper {
       position: relative;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      padding-bottom: 56.25%;
       height: 0;
       overflow: hidden;
       border-radius: 12px;
@@ -79,7 +82,6 @@
       border: none;
     }
 
-    /* Articles section */
     section.articles h2 {
       border-bottom: 2px solid #4fc3f7;
       padding-bottom: 8px;
@@ -119,7 +121,6 @@
       text-decoration: underline;
     }
 
-    /* Footer */
     footer {
       margin-top: 50px;
       padding: 15px 0;
@@ -139,7 +140,6 @@
       text-decoration: underline;
     }
 
-    /* Responsive typography */
     @media (max-width: 600px) {
       header h1 {
         font-size: 2rem;
@@ -155,7 +155,6 @@
     </header>
 
     <div class="video-wrapper">
-      <!-- Official Microsoft & Oman Vision 2040 related video -->
       <iframe src="https://www.youtube.com/embed/5N6Ww85GUlo" title="Microsoft Oman Vision 2040" allowfullscreen></iframe>
     </div>
 
@@ -181,3 +180,11 @@
   </div>
 </body>
 </html>
+"""
+
+@app.route("/")
+def home():
+    return render_template_string(html_content)
+
+if __name__ == "__main__":
+    app.run(debug=True)
