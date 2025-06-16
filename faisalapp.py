@@ -1,5 +1,6 @@
 from flask import Flask, render_template_string, send_file
 from fpdf import FPDF
+from io import BytesIO
 
 app = Flask(__name__)
 
@@ -15,13 +16,9 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8" />
     <title>Microsoft & Oman Vision 2040</title>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
         body {
             font-family: 'Roboto', Arial, sans-serif;
             background: linear-gradient(135deg, #e0f0ff, #ffffff);
@@ -107,7 +104,7 @@ HTML_TEMPLATE = """
           allowfullscreen
         ></iframe>
 
-        <a class="btn-download" href="/download-pdf" download>
+        <a class="btn-download" href="/download-pdf">
             Download PDF Report <i class="fa-solid fa-file-pdf"></i>
         </a>
     </main>
@@ -119,21 +116,35 @@ HTML_TEMPLATE = """
 </html>
 """
 
+class PDFReport(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 14)
+        self.set_text_color(0, 120, 212)
+        self.cell(0, 10, "Microsoft's Role in Supporting Oman Vision 2040", ln=True, align="C")
+        self.ln(5)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Arial", "I", 8)
+        self.set_text_color(169, 169, 169)
+        self.cell(0, 10, f'Page {self.page_no()}', align='C')
+
 @app.route('/')
 def home():
     return render_template_string(HTML_TEMPLATE, article=ARTICLE_TEXT)
 
 @app.route('/download-pdf')
 def download_pdf():
-    pdf = FPDF()
+    pdf = PDFReport()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     pdf.multi_cell(0, 10, ARTICLE_TEXT)
 
-    pdf_path = "report.pdf"
-    pdf.output(pdf_path)
+    pdf_buffer = BytesIO()
+    pdf.output(pdf_buffer)
+    pdf_buffer.seek(0)
 
-    return send_file(pdf_path, as_attachment=True)
+    return send_file(pdf_buffer, as_attachment=True, download_name="OmanVision_Report.pdf")
 
 if __name__ == '__main__':
     app.run(debug=True)
