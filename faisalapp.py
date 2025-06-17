@@ -2,6 +2,9 @@ from flask import Flask
 
 faisalapp = Flask(__name__)
 
-@faisalapp.route("/")
+@faisalapp.route('/')
 def home():
-    return "<h1>Hello Faisal! Flask on Azure Linux Web App with Gunicorn.</h1>"
+    return "Hello from Faisal Flask app!"
+
+if __name__ == '__main__':
+    faisalapp.run()
